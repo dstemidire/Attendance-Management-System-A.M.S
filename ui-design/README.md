@@ -10,3 +10,9 @@ https://www.figma.com/file/1qguYeEwmJRIppPPvyo3RN/Attendance-Management-System-A
 + Green Color
 + Add Student Form
 + Edit Student Form
+
+**Primary Font**
++ Poppins
+
+**Primary Color**
++ Hex Code: 553C9A
