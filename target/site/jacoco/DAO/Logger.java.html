@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Logger.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AMSMOCK</a> &gt; <a href="index.source.html" class="el_package">DAO</a> &gt; <span class="el_source">Logger.java</span></div><h1>Logger.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package DAO;
+
+import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+
+/**
+ * The class represents student signing and sign-out (used by hibernate (framework)). All
+ * record are carried out using this class object.
+ *
+ * @author AHMOD
+ */
+@Entity
+@Table
+public class Logger implements Serializable{
+
+    /**
+     * @return the id
+     */
+    public int getId() {
+<span class="nc" id="L33">        return id;</span>
+    }
+
+    /**
+     * @param id the id to set
+     */
+    public void setId(int id) {
+<span class="nc" id="L40">        this.id = id;</span>
+<span class="nc" id="L41">    }</span>
+    
+<span class="nc" id="L43">    public Logger(){</span>
+        
+<span class="nc" id="L45">    }</span>
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    
+    @OneToOne
+    private Student name;
+    
+    @OneToOne
+    private Course course;
+    
+    @Column
+    private String timeIn;
+    
+    @Column
+    private String initial;
+    
+    @Column
+    private String timeOut;
+
+    @Column
+    private String today;
+    /**
+     * @return the name
+     */
+    public Student getName() {
+<span class="nc" id="L72">        return name;</span>
+    }
+
+    /**
+     * @param name the name to set
+     */
+    public void setName(Student name) {
+<span class="nc" id="L79">        this.name = name;</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * @return the course
+     */
+    public Course getCourse() {
+<span class="nc" id="L86">        return course;</span>
+    }
+
+    /**
+     * @param course the course to set
+     */
+    public void setCourse(Course course) {
+<span class="nc" id="L93">        this.course = course;</span>
+<span class="nc" id="L94">    }</span>
+
+    /**
+     * @return the timeIn
+     */
+    public String getTimeIn() {
+<span class="nc" id="L100">        return timeIn;</span>
+    }
+
+    /**
+     * @param timeIn the timeIn to set
+     */
+    public void setTimeIn(String timeIn) {
+<span class="nc" id="L107">        this.timeIn = timeIn;</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * @return the initial
+     */
+    public String getInitial() {
+<span class="nc" id="L114">        return initial;</span>
+    }
+
+    /**
+     * @param initial the initial to set
+     */
+    public void setInitial(String initial) {
+<span class="nc" id="L121">        this.initial = initial;</span>
+<span class="nc" id="L122">    }</span>
+
+    /**
+     * @return the timeOut
+     */
+    public String getTimeOut() {
+<span class="nc" id="L128">        return timeOut;</span>
+    }
+
+    /**
+     * @param timeOut the timeOut to set
+     */
+    public void setTimeOut(String timeOut) {
+<span class="nc" id="L135">        this.timeOut = timeOut;</span>
+<span class="nc" id="L136">    }</span>
+
+    /**
+     * @return the today
+     */
+    public String getToday() {
+<span class="nc" id="L142">        return today;</span>
+    }
+
+    /**
+     * @param today the today to set
+     */
+    public void setToday(String today) {
+<span class="nc" id="L149">        this.today = today;</span>
+<span class="nc" id="L150">    }</span>
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

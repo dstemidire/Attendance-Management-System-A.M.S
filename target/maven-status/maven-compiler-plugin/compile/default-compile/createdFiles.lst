@@ -1,0 +1,6 @@
+DAO\Course.class
+DAO\Student.class
+SpringIoc\Appconfig.class
+ManagedBeans\StudentBean.class
+DAO\HibernateMain.class
+DAO\Logger.class

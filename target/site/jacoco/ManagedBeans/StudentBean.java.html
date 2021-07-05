@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StudentBean.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AMSMOCK</a> &gt; <a href="index.source.html" class="el_package">ManagedBeans</a> &gt; <span class="el_source">StudentBean.java</span></div><h1>StudentBean.java</h1><pre class="source lang-java linenums">package ManagedBeans;
+
+import javax.faces.application.FacesMessage;
+import DAO.Logger;
+import java.time.LocalDate;
+import javax.faces.context.FacesContext;
+import DAO.Course;
+import java.util.stream.Collectors;
+import DAO.Student;
+import DAO.HibernateMain;
+import java.util.ArrayList;
+import java.util.List;
+import SpringIoc.Appconfig;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import java.time.LocalDateTime;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
+import java.io.Serializable;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
+import javax.faces.context.ExternalContext;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVPrinter;
+
+/**
+ * This class represents student managed bean connected to jsf UI.
+ *
+ * @author AHMOD
+ */
+@Named(&quot;studentB&quot;)
+@RequestScoped
+public class StudentBean implements Serializable {
+
+    // student name
+    private String name;
+    // student course name
+    private String course;
+    // student initial
+    private String initial;
+    // student time in
+    private LocalDateTime timeIn;
+    // student time out
+    private LocalDateTime timeOut;
+    // student log status
+    private boolean logStatus;
+    // object to acheive IOC (invertion of control)
+<span class="nc" id="L53">    private final AnnotationConfigApplicationContext acac = new AnnotationConfigApplicationContext(Appconfig.class);</span>
+    StringBuilder stringInitial;
+    // loggers query result
+    private List&lt;Logger&gt; loggersDetails;
+    // use for identifying student signing out.
+    private Logger selectedLogger;
+
+<span class="nc" id="L60">    public StudentBean() {</span>
+
+<span class="nc" id="L62">    }</span>
+
+    public String getName() {
+<span class="nc" id="L65">        return this.name;</span>
+    }
+
+    public void setName(String name) {
+<span class="nc" id="L69">        this.name = name;</span>
+<span class="nc" id="L70">    }</span>
+
+    public String getCourse() {
+<span class="nc" id="L73">        return this.course;</span>
+    }
+
+    public void setCourse(String course) {
+<span class="nc" id="L77">        this.course = course;</span>
+<span class="nc" id="L78">    }</span>
+
+    public String getInitial() {
+<span class="nc" id="L81">        return this.initial;</span>
+    }
+
+    public void setInitial(String initial) {
+<span class="nc" id="L85">        this.initial = initial;</span>
+<span class="nc" id="L86">    }</span>
+
+    public LocalDateTime getTimeIn() {
+<span class="nc" id="L89">        return this.timeIn;</span>
+    }
+
+    public void setTimeIn(LocalDateTime timeIn) {
+<span class="nc" id="L93">        this.timeIn = timeIn;</span>
+<span class="nc" id="L94">    }</span>
+
+    public LocalDateTime getTimeOut() {
+<span class="nc" id="L97">        return this.timeOut;</span>
+    }
+
+    public void setTimeOut(LocalDateTime timeOut) {
+<span class="nc" id="L101">        this.timeOut = timeOut;</span>
+<span class="nc" id="L102">    }</span>
+
+    public boolean isLogStatus() {
+<span class="nc" id="L105">        return this.logStatus;</span>
+    }
+
+    public void setLogStatus(boolean logStatus) {
+<span class="nc" id="L109">        this.logStatus = logStatus;</span>
+<span class="nc" id="L110">    }</span>
+
+    /**
+     * auto complete student name when typing.
+     *
+     * @param  query
+     *         string typed in UI
+     * @return generic list object.
+     *         The result of data queried based on input string.
+     */
+    public List&lt;String&gt; autocompleteStudentName(String query) {
+<span class="nc" id="L121">        String queryLowerCase = query.toLowerCase();</span>
+<span class="nc" id="L122">        List&lt;String&gt; studentNameList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L123">        List&lt;Student&gt; studentsObjectList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Student&quot;, Student.class);</span>
+<span class="nc" id="L124">        studentsObjectList.stream().map(eachStudentObjectList -&gt; {</span>
+<span class="nc" id="L125">            studentNameList.add(eachStudentObjectList.getStudentName());</span>
+<span class="nc" id="L126">            return eachStudentObjectList;</span>
+<span class="nc" id="L127">        }).forEachOrdered(eachStudentObjectList -&gt; System.out.println(eachStudentObjectList.getStudentName()));</span>
+<span class="nc" id="L128">        return studentNameList.stream().filter(t -&gt; t.toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());</span>
+    }
+
+     /**
+     * auto complete student name when typing.
+     *
+     * @param  query
+     *         string typed in UI
+     * @return generic list object.
+     *         The result of data queried based on input string.
+     */
+    public List&lt;String&gt; autocompleteCourseName(String query) {
+<span class="nc" id="L140">        String queryLowerCase = query.toLowerCase();</span>
+<span class="nc" id="L141">        List&lt;String&gt; courseNameList = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L142">        List&lt;Course&gt; courseObjectList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Course&quot;, Course.class);</span>
+<span class="nc" id="L143">        courseObjectList.stream().map(eachStudentObjectList -&gt; {</span>
+<span class="nc" id="L144">            courseNameList.add(eachStudentObjectList.getCourseName());</span>
+<span class="nc" id="L145">            return eachStudentObjectList;</span>
+<span class="nc" id="L146">        }).forEachOrdered(eachStudentObjectList -&gt; System.out.println(eachStudentObjectList.getCourseName()));</span>
+<span class="nc" id="L147">        System.out.print(&quot;autocomplete course name: &quot; + this.course);</span>
+<span class="nc" id="L148">        return courseNameList.stream().filter(t -&gt; t.toLowerCase().startsWith(queryLowerCase)).collect(Collectors.toList());</span>
+    }
+
+    /**
+     * generate initial from student name.
+     * @return String
+     *         The first letter of each word I.E
+     *         returns SAM if name = Samuel Ajayi Mark.
+     */
+    public String createInitial() {
+<span class="nc" id="L158">        System.out.println(&quot;START LISTENER&quot;);</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (name != null) {</span>
+<span class="nc" id="L160">            stringInitial = new StringBuilder();</span>
+<span class="nc" id="L161">            String[] splittedStudentName = name.split(&quot;[ ]&quot;);</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">            for (String s : splittedStudentName) {</span>
+<span class="nc" id="L163">                stringInitial.append(s.charAt(0));</span>
+            }
+<span class="nc" id="L165">            initial = stringInitial.toString();</span>
+        }
+<span class="nc" id="L167">        System.out.println(&quot;Initial: &quot; + initial);</span>
+<span class="nc" id="L168">        return initial;</span>
+    }
+
+    // sign in proccess for student
+    public void logIn() {
+        // object to access all neccessary client request information.
+<span class="nc" id="L174">        FacesContext context = FacesContext.getCurrentInstance();</span>
+<span class="nc bnc" id="L175" title="All 4 branches missed.">        if (name != null &amp;&amp; course != null) {</span>
+<span class="nc" id="L176">            System.out.print(&quot;In if block inside the logIn method&quot;);</span>
+<span class="nc" id="L177">            List&lt;Student&gt; studentList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Student where studentName = '&quot; + name + &quot;'&quot;, Student.class);</span>
+<span class="nc" id="L178">            List&lt;Course&gt; courseList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Course where courseName = '&quot; + course + &quot;'&quot;, Course.class);</span>
+<span class="nc" id="L179">            List&lt;Logger&gt; loggerList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Logger where name_id = &quot; + studentList.get(0).getId() + &quot;AND course_id = &quot; + courseList.get(0).getId() + &quot;AND today = '&quot; + LocalDate.now().toString() + &quot;'&quot;, Logger.class);</span>
+<span class="nc bnc" id="L180" title="All 2 branches missed.">            if (!loggerList.isEmpty()) {</span>
+<span class="nc" id="L181">                System.out.println(&quot;inside check loggerlist&quot;);</span>
+<span class="nc" id="L182">                logStatus = false;</span>
+<span class="nc" id="L183">                context.addMessage((String) null, new FacesMessage(loginMessage(logStatus) + &quot; You've signed in already&quot;));</span>
+            } else {
+<span class="nc" id="L185">                System.out.println(&quot;outside check loggerlist&quot;);</span>
+<span class="nc" id="L186">                Logger loggerObject = acac.getBean(Logger.class);</span>
+<span class="nc" id="L187">                loggerObject.setName((Student) studentList.get(0));</span>
+<span class="nc" id="L188">                loggerObject.setCourse((Course) courseList.get(0));</span>
+<span class="nc" id="L189">                loggerObject.setTimeIn(LocalDateTime.now().toString());</span>
+<span class="nc" id="L190">                loggerObject.setInitial(this.createInitial());</span>
+<span class="nc" id="L191">                loggerObject.setToday(LocalDate.now().toString());</span>
+<span class="nc" id="L192">                setLogStatus(acac.getBean(HibernateMain.class).insertSession(loggerObject, Logger.class));</span>
+<span class="nc" id="L193">                context.addMessage(null, new FacesMessage(loginMessage(logStatus)));</span>
+            }
+        }
+<span class="nc" id="L196">    }</span>
+
+    // sign out proccess for student
+    public void logOut() {
+         // object to access all neccessary client request information.
+<span class="nc" id="L201">        FacesContext context = FacesContext.getCurrentInstance();</span>
+<span class="nc bnc" id="L202" title="All 4 branches missed.">        if (selectedLogger.getName().getStudentName() != null &amp;&amp; selectedLogger.getCourse().getCourseName() != null) {</span>
+<span class="nc" id="L203">            System.out.print(&quot;In if block inside the logout method&quot;);</span>
+<span class="nc" id="L204">            List&lt;Student&gt; studentList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Student where studentName = '&quot; + selectedLogger.getName().getStudentName() + &quot;'&quot;, Student.class);</span>
+<span class="nc" id="L205">            List&lt;Course&gt; courseList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Course where courseName = '&quot; + selectedLogger.getCourse().getCourseName() + &quot;'&quot;, Course.class);</span>
+<span class="nc" id="L206">            List&lt;Logger&gt; loggerList = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Logger where name_id = &quot; + studentList.get(0).getId() + &quot;AND course_id = &quot; + courseList.get(0).getId() + &quot;AND today = '&quot; + LocalDate.now().toString() + &quot;'&quot;, Logger.class);</span>
+<span class="nc bnc" id="L207" title="All 2 branches missed.">            if (loggerList.get(0).getTimeOut() != null) {</span>
+<span class="nc" id="L208">                System.out.println(&quot;inside check loggerlist&quot;);</span>
+<span class="nc" id="L209">                System.out.println(&quot;loggerlist: &quot; + loggerList.get(0).getTimeOut());</span>
+<span class="nc" id="L210">                logStatus = false;</span>
+<span class="nc" id="L211">                context.addMessage(null, new FacesMessage(loginMessage(logStatus) + &quot; You've signed out&quot;));</span>
+            } else {
+<span class="nc" id="L213">                Logger loggerUpdate = loggerList.get(0);</span>
+<span class="nc" id="L214">                loggerUpdate.setTimeOut(LocalDateTime.now().toString());</span>
+<span class="nc" id="L215">                setLogStatus(acac.getBean(HibernateMain.class).updateSession(loggerUpdate, Logger.class));</span>
+<span class="nc" id="L216">                context.addMessage(null, new FacesMessage(loginMessage(logStatus)));</span>
+            }
+        }
+<span class="nc" id="L219">    }</span>
+
+    /**
+     * Login message
+     * @param logStatusObject 
+     * @return String
+     *         login message based on logStatusObject
+     */
+    public String loginMessage(boolean logStatusObject) {
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        if (logStatusObject) {</span>
+<span class="nc" id="L229">            return &quot;Successfull&quot;;</span>
+        }
+<span class="nc" id="L231">        return &quot;Unsuccessful&quot;;</span>
+    }
+
+    /**
+     * @return loggersDetails
+     *         result for all records in the Logger's table.
+     */
+    public List&lt;Logger&gt; getLoggersDetails() {
+<span class="nc" id="L239">        loggersDetails = acac.getBean(HibernateMain.class).selectSession(&quot;SELECT * FROM Logger WHERE today = &quot; + &quot;'&quot; + LocalDate.now() + &quot;'&quot;, Logger.class);</span>
+<span class="nc" id="L240">        return loggersDetails;</span>
+
+    }
+
+    /**
+     * @param loggersDetails the loggersDetails to set
+     */
+    public void setLoggersDetails(List&lt;Logger&gt; loggersDetails) {
+<span class="nc" id="L248">        this.loggersDetails = loggersDetails;</span>
+<span class="nc" id="L249">    }</span>
+
+    /**
+     * @return the selectedLogger
+     */
+    public Logger getSelectedLogger() {
+<span class="nc" id="L255">        return selectedLogger;</span>
+    }
+
+    /**
+     * @param selectedLogger the selectedLogger to set
+     */
+    public void setSelectedLogger(Logger selectedLogger) {
+<span class="nc" id="L262">        this.selectedLogger = selectedLogger;</span>
+<span class="nc" id="L263">    }</span>
+    
+    // generate a csv file of all record in the Logger's table.
+    public void generateCsv() throws IOException {
+<span class="nc" id="L267">        System.out.println(&quot;generate csv method&quot;);</span>
+<span class="nc" id="L268">        Path path = Paths.get(&quot;C:\\Users\\AHMOD\\Documents\\Apache Netbean Project\\AMSMOCK\\src\\main\\webapp\\CSV_Folder&quot; + LocalDate.now().toString() + &quot;.csv&quot;);</span>
+<span class="nc" id="L269">        BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.CREATE);</span>
+<span class="nc" id="L270">        try (CSVPrinter csvPrinter = CSVFormat.DEFAULT</span>
+<span class="nc" id="L271">                .print(bufferedWriter)) {</span>
+<span class="nc bnc" id="L272" title="All 2 branches missed.">            for (Logger loggersDetail : loggersDetails) {</span>
+<span class="nc" id="L273">                csvPrinter.printRecord(loggersDetail.getId(), loggersDetail.getName().getStudentName(),</span>
+<span class="nc" id="L274">                        loggersDetail.getCourse().getCourseName(), loggersDetail.getInitial(),</span>
+<span class="nc" id="L275">                        loggersDetail.getTimeIn(), loggersDetail.getTimeOut());</span>
+<span class="nc" id="L276">            }</span>
+            // object to access all neccessary client request information.
+<span class="nc" id="L278">            FacesContext facesContext = FacesContext.getCurrentInstance();</span>
+<span class="nc" id="L279">            ExternalContext ec= facesContext.getExternalContext();</span>
+<span class="nc" id="L280">            ec.responseReset();</span>
+<span class="nc" id="L281">            ec.setResponseContentType(&quot;text/csv&quot;);</span>
+<span class="nc" id="L282">            ec.setResponseHeader(&quot;Content-Disposition&quot;, &quot;attachment;filename=CSV_Folder&quot;+LocalDate.now()+&quot;.csv&quot;);</span>
+<span class="nc" id="L283">            OutputStream out = ec.getResponseOutputStream();</span>
+<span class="nc" id="L284">            try (InputStream input = Files.newInputStream(path, StandardOpenOption.READ)) {</span>
+                int a;
+<span class="nc bnc" id="L286" title="All 2 branches missed.">                while ((a = input.read()) != -1) {</span>
+<span class="nc" id="L287">                    out.write(a);</span>
+<span class="nc" id="L288">                    out.flush();</span>
+                }
+<span class="nc" id="L290">                facesContext.responseComplete();</span>
+            }
+        }
+<span class="nc" id="L293">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HibernateMain.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AMSMOCK</a> &gt; <a href="index.source.html" class="el_package">DAO</a> &gt; <span class="el_source">HibernateMain.java</span></div><h1>HibernateMain.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package DAO;
+
+/**
+ *
+ * @author AHMOD
+ */
+import java.util.List;
+import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.hibernate.cfg.Configuration;
+
+/**
+ * Main data access object, use for all kinds of DML(data manipulation language) etc.
+ *
+ * @author AHMOD
+ */
+<span class="nc" id="L25">public class HibernateMain&lt;E&gt; {</span>
+    //for holding query result performed by date query language statement.
+    private List&lt;E&gt; selectList;
+    
+
+     /**
+     * use for all kind of query language
+     *
+     * @param  selectStatement
+     *         The SQL query language statement
+     * @param entityObject 
+     *        The class object to performed query on.
+     * @return generic list object.
+     *         The result of data query language.
+     */
+    public List&lt;E&gt; selectSession(String selectStatement, Class entityObject) {
+<span class="nc" id="L41">        Configuration configuration = new Configuration().configure(&quot;hibernate.cfg.xml&quot;);</span>
+<span class="nc" id="L42">    StandardServiceRegistryBuilder serviceRegistry</span>
+<span class="nc" id="L43">                = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());</span>
+<span class="nc" id="L44">        configuration.addAnnotatedClass(entityObject);</span>
+<span class="nc" id="L45">        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry.build());</span>
+
+        Session selectSessionObject;
+<span class="nc" id="L48">        selectSessionObject = sessionFactory.openSession();</span>
+        try {
+<span class="nc" id="L50">            Transaction transact = selectSessionObject.beginTransaction();</span>
+<span class="nc" id="L51">            SQLQuery SqlQuery = selectSessionObject.createSQLQuery(selectStatement).addEntity(entityObject);</span>
+<span class="nc" id="L52">            selectList = SqlQuery.list();</span>
+<span class="nc" id="L53">            transact.commit();</span>
+
+<span class="nc" id="L55">        } catch (Exception e) {</span>
+<span class="nc" id="L56">            e.getMessage();</span>
+        } finally {
+<span class="nc" id="L58">            selectSessionObject.close();</span>
+        }
+<span class="nc" id="L60">        return selectList;</span>
+    }
+    
+
+    Transaction insertTransact;
+
+    /**
+     * use for all kind of query language
+     *
+     * @param  insertObject
+     *         Data object to perform insert operation.
+     * @param entityObject 
+     *        The class object to performed sql insert operation.
+     * @return boolean object.
+     *         true if insert operation was successful or false if not.
+     */
+    public boolean insertSession(Object insertObject, Class entityObject) {
+<span class="nc" id="L77">         Configuration configuration = new Configuration().configure(&quot;hibernate.cfg.xml&quot;);</span>
+<span class="nc" id="L78">    StandardServiceRegistryBuilder serviceRegistry</span>
+<span class="nc" id="L79">                = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());</span>
+<span class="nc" id="L80">        configuration.addAnnotatedClass(entityObject);</span>
+<span class="nc" id="L81">        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry.build());</span>
+
+<span class="nc" id="L83">        Session insertSessionObject = sessionFactory.openSession();</span>
+        try {
+<span class="nc" id="L85">            insertTransact = insertSessionObject.beginTransaction();</span>
+<span class="nc" id="L86">            insertSessionObject.save(insertObject);</span>
+<span class="nc" id="L87">            insertTransact.commit();</span>
+
+<span class="nc" id="L89">        } catch (Exception e) {</span>
+<span class="nc" id="L90">            e.getMessage();</span>
+        } finally {
+<span class="nc" id="L92">            insertSessionObject.close();</span>
+        }
+<span class="nc" id="L94">        return insertTransact.wasCommitted();</span>
+    }
+    
+    Transaction updateTransact;
+    
+      /**
+     * use for all kind of query language
+     *
+     * @param  updateObject
+     *         Data object to perform update operation.
+     * @param entityObject 
+     *        The class object to performed sql update operation.
+     * @return boolean object.
+     *         true if insert operation was successful or false if not.
+     */
+     public boolean updateSession(Object updateObject, Class entityObject) {
+<span class="nc" id="L110">          Configuration configuration = new Configuration().configure(&quot;hibernate.cfg.xml&quot;);</span>
+<span class="nc" id="L111">    StandardServiceRegistryBuilder serviceRegistry</span>
+<span class="nc" id="L112">                = new StandardServiceRegistryBuilder().applySettings(configuration.getProperties());</span>
+<span class="nc" id="L113">        configuration.addAnnotatedClass(entityObject);</span>
+<span class="nc" id="L114">        SessionFactory sessionFactory = configuration.buildSessionFactory(serviceRegistry.build());</span>
+
+<span class="nc" id="L116">        Session updateSessionObject = sessionFactory.openSession();</span>
+        try {
+<span class="nc" id="L118">            updateTransact = updateSessionObject.beginTransaction();</span>
+<span class="nc" id="L119">            updateSessionObject.update(updateObject);</span>
+<span class="nc" id="L120">            updateTransact.commit();</span>
+
+<span class="nc" id="L122">        } catch (Exception e) {</span>
+<span class="nc" id="L123">            e.getMessage();</span>
+        } finally {
+<span class="nc" id="L125">            updateSessionObject.close();</span>
+        }
+<span class="nc" id="L127">        return updateTransact.wasCommitted();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.5.201910111838</span></div></body></html>

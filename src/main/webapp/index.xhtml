@@ -1,0 +1,48 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Niit</title>
+    </h:head>
+    <h:body>
+        <h:form>
+            <h:commandButton value="Add new student" action="sign_in"/>
+            <label>Attendance</label> 
+            <p:clock/>
+            <h:commandButton action="#{studentB.generateCsv()}" value="Download"/>
+            <h:messages globalOnly="true" />
+            <p:dataTable var="logger" value="#{studentB.loggersDetails}">
+                <p:column headerText="S/N">
+                    <h:outputText value="#{logger.id}"/>
+                </p:column>
+                <p:column headerText="Student name">
+                    <h:outputText value="#{logger.name.studentName}"/>
+                </p:column>
+                <p:column headerText="Course">
+                    <h:outputText value="#{logger.course.courseName}"/>
+                </p:column>
+                <p:column headerText="Time in">
+                    <h:outputText value="#{logger.timeIn}"/>
+                </p:column>
+                <p:column headerText="Initial">
+                    <h:outputText value="#{logger.initial}"/>
+                </p:column>
+                <p:column headerText="Time out">
+                    <h:outputText value="#{logger.timeOut}"/>
+                </p:column>
+                <p:column headerText="Action" colspan="2">
+                    <h:commandButton value="edit" action="#{studentEditBean.initNameAndCourse()}">
+                        <f:setPropertyActionListener value="#{logger}" target="#{studentEditBean.selectedLogger}"/>
+                        </h:commandButton>
+                    <h:commandButton value="sign out" action="#{studentB.logOut()}">
+                        <f:setPropertyActionListener value="#{logger}" target="#{studentB.selectedLogger}"/>
+                    </h:commandButton>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </h:body>
+</html>
+

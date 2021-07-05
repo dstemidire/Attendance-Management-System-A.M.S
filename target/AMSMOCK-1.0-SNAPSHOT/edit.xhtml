@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title></title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </h:head>
+    <body>
+        <h:form>
+            <p:autoComplete value="#{studentEditBean.name}" 
+                            completeMethod="#{studentEditBean.autocompleteStudentName(studentEditBean.name)}" 
+                            maxResults="4" forceSelection="true" >
+                <p:ajax event="keyup"/>
+                 <p:ajax event="focus"/>
+                <f:validateRequired/>
+            </p:autoComplete>
+
+            <p:autoComplete value="#{studentEditBean.course}" 
+                            completeMethod="#{studentEditBean.autocompleteCourseName(studentEditBean.course)}" 
+                            forceSelection="true"
+                            scrollHeight="200">
+                <p:ajax event="keyup"/>
+                 <p:ajax event="focus"/>
+                
+                <f:validateRequired/>
+            </p:autoComplete>
+            <br/>
+            <h:commandButton value="close" action="index" />
+
+            <h:commandButton value="Edit" action="#{studentEditBean.editLogger()}" />
+            <h:messages globalOnly="true" />
+        </h:form>
+    </body>
+</html>
